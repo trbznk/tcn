@@ -53,14 +53,19 @@ class Trainer:
 
     def predict(self, model, data_loader):
         model.eval()
-        y_true = []
-        y_pred = []
+
+        all_inputs, all_targets, all_outputs, y_true, y_pred = [], [], [], [], []
 
         for inputs, targets in data_loader["dev"]:
             inputs, targets = inputs.to(self.device), targets.to(self.device)
+
             outputs = model(inputs)
+
+            all_inputs.append(inputs.tolist())
+            all_targets.append(targets.tolist())
+            all_outputs.append(outputs.tolist())
 
             y_true += targets[:, [0]].view(-1).tolist()
             y_pred += outputs[:, [0]].view(-1).tolist()
 
-        return y_true, y_pred
+        return all_inputs, all_targets, all_outputs, y_true, y_pred
